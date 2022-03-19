@@ -20,7 +20,7 @@ export class SobelService {
 
   /**
    * Applies sobel's algorithm to the supplied raw image data and returns a derivative of the original.
-   * 
+   *
    * @param imageData, grayscaled raw image data.
    * @param width, non-zero indexed width of the image.
    * @param height, non-zero index height of the image.
