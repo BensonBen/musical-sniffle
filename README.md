@@ -131,8 +131,6 @@ export class GraphPaperComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.context = this.canvas.nativeElement.getContext('2d');
     const containerElement: Element | undefined = _first(this.elementRef.nativeElement.children);
-    this.width.emit(containerElement?.clientWidth);
-    this.height.emit(containerElement?.clientHeight);
   }
 }
 ```
