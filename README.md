@@ -63,6 +63,8 @@ await sharp(detected, { raw: { channels: 4, height, width } }).toFile(
 2.  Usage with Angular 13.x.x
 
 ```typescript
+import { SobelService } from '@musical-sniffle/sobel-edge-detection';
+
 @Component({
   selector: 'my-component',
   template: `<div class="graph-paper">
@@ -100,8 +102,10 @@ export class GraphPaperComponent implements AfterViewInit {
       tempHtmlElement.onload = event$ => {
         this.canvas.nativeElement.width = tempHtmlElement.width;
         this.canvas.nativeElement.height = tempHtmlElement.height;
+        // start: remove if image already grayscaled.
         (this.context as CanvasRenderingContext2D).filter = 'grayscale(1)';
         this.context?.drawImage(tempHtmlElement, 0, 0, tempHtmlElement.width, tempHtmlElement.height);
+        // end: remove if image already grayscaled.
         const grayscaled = this.context?.getImageData(0, 0, tempHtmlElement.width, tempHtmlElement.height);
         const { imageData } = this.sobelService.applySobel(
           grayscaled?.data,
