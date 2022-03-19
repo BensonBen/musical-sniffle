@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "projects": {
+    "canny-edge-detection": "apps/canny-edge-detection",
+    "canny-edge-detection-e2e": "apps/canny-edge-detection-e2e"
+  }
+}

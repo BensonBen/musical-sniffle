@@ -1,0 +1,94 @@
+{
+  "projectType": "application",
+  "root": "apps/canny-edge-detection",
+  "sourceRoot": "apps/canny-edge-detection/src",
+  "prefix": "musical-sniffle",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/canny-edge-detection",
+        "index": "apps/canny-edge-detection/src/index.html",
+        "main": "apps/canny-edge-detection/src/main.ts",
+        "polyfills": "apps/canny-edge-detection/src/polyfills.ts",
+        "tsConfig": "apps/canny-edge-detection/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/canny-edge-detection/src/favicon.ico",
+          "apps/canny-edge-detection/src/assets"
+        ],
+        "styles": ["apps/canny-edge-detection/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/canny-edge-detection/src/environments/environment.ts",
+              "with": "apps/canny-edge-detection/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "canny-edge-detection:build:production"
+        },
+        "development": {
+          "browserTarget": "canny-edge-detection:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "canny-edge-detection:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/canny-edge-detection/src/**/*.ts",
+          "apps/canny-edge-detection/src/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/canny-edge-detection"],
+      "options": {
+        "jestConfig": "apps/canny-edge-detection/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
