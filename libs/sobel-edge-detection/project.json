@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/sobel-edge-detection",
+  "sourceRoot": "libs/sobel-edge-detection/src",
+  "prefix": "musical-sniffle",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/sobel-edge-detection"],
+      "options": {
+        "project": "libs/sobel-edge-detection/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/sobel-edge-detection/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/sobel-edge-detection/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/sobel-edge-detection"],
+      "options": {
+        "jestConfig": "libs/sobel-edge-detection/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/sobel-edge-detection/src/**/*.ts",
+          "libs/sobel-edge-detection/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,7 @@
+{
+  "name": "@musical-sniffle/sobel-edge-detection",
+  "version": "1.0.0-beta.0",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}

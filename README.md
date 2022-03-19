@@ -1,105 +1,182 @@
+# Musical Sniffle 👃💨🎵
 
+<p align="center">
+	<img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
+</p>
 
-# MusicalSniffle
+## Description
 
-This project was generated using [Nx](https://nx.dev).
+Musical Sniffle is designed to be an open source oriented organization to store [my](https://github.com/BensonBen) implementations of Sobels' Algorithm.
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+## Current State
 
-🔎 **Smart, Fast and Extensible Build System**
+- [x] Able to use Sobels' Algorithm with NodeJS.
+- [x] Able to use Sobels' Algorithm with Angular.
 
-## Quick Start & Documentation
+## Table of Contents
 
-[Nx Documentation](https://nx.dev/angular)
+- [Built With](#built-with)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [Credits](#credits)
 
-[10-minute video showing all Nx features](https://nx.dev/getting-started/intro)
+## Built With
 
-[Interactive Tutorial](https://nx.dev/tutorial/01-create-application)
+- [NX](https://nx.dev) Mono-Repo / Complexity Management
+- [Angular](https://angular.io/) Web Framework
+- [ESLint](https://eslint.org) Style Adherence
+- [Jest](https://jestjs.io) Frontend Testing
+- [Node JS](https://nodejs.org/en/) Backend
 
-## Adding capabilities to your workspace
+## Usage
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+1.  Usage with Node JS 16.x and [sharp](https://github.com/lovell/sharp)
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+```typescript
+// using this implementation requires the ability to create a 
+import * as sharp from 'sharp';
+import { SobelService } from '@musical-sniffle/sobel-edge-detection';
 
-Below are our core plugins:
+const sobelService = new SobelService();
+// sobel's algorithm uses grayscale image data.
+const { data, info } = await sharp(`${__dirname}/my-image.png`)
+  .ensureAlpha()
+  .grayscale()
+  // optional, but useful to do blur beforehand.
+  // .blur(3)
+  .raw()
+  .toBuffer({ resolveWithObject: true });
 
-- [Angular](https://angular.io)
-  - `ng add @nrwl/angular`
-- [React](https://reactjs.org)
-  - `ng add @nrwl/react`
-- Web (no framework frontends)
-  - `ng add @nrwl/web`
-- [Nest](https://nestjs.com)
-  - `ng add @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `ng add @nrwl/express`
-- [Node](https://nodejs.org)
-  - `ng add @nrwl/node`
+const { width, channels, height } = info;
+const { imageData: detected } = sobelService.applySobel(
+  new Uint8ClampedArray(data.buffer),
+  width,
+  height,
+  channels
+);
+const imagename = `${__dirname}/edge-detected-image.png`;
+await sharp(detected, { raw: { channels: 4, height, width } }).toFile(
+  imagename
+);
+```
 
-There are also many [community plugins](https://nx.dev/community) you could add.
+2.  Usage with Angular 13.x.x
 
-## Generate an application
+```typescript
+@Component({
+  selector: 'my-component',
+  template: `<div class="graph-paper">
+    <canvas id="canvas" #canvas width="100%" height="100%"></canvas>
+  </div> `,
+  styles: [
+    `
+      :host {
+        width: 100%;
+        height: 100%;
+      }
 
-Run `ng g @nrwl/angular:app my-app` to generate an application.
+      .graph-paper {
+        z-index: 10;
+        background-size: 40px 40px;
+        background-image: linear-gradient(to right, lightgray 1px, transparent 1px),
+          linear-gradient(to bottom, lightgray 1px, transparent 1px);
+        width: 100%;
+        height: 100%;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.Default,
+  providers: [SobelService],
+})
+export class GraphPaperComponent implements AfterViewInit {
+   /**
+    * The encoded image here is in base64 and is not currently grayscaled.
+    * 
+    * You can forego a lot of code here by simply grayscaling the image on the backend before applying sobel.
+    */
+  @Input() set img(encodedImg: string) {
+    if (!(encodedImg == null)) {
+      const tempHtmlElement = new Image();
+      tempHtmlElement.onload = event$ => {
+        this.canvas.nativeElement.width = tempHtmlElement.width;
+        this.canvas.nativeElement.height = tempHtmlElement.height;
+        (this.context as CanvasRenderingContext2D).filter = 'grayscale(1)';
+        this.context?.drawImage(tempHtmlElement, 0, 0, tempHtmlElement.width, tempHtmlElement.height);
+        const grayscaled = this.context?.getImageData(0, 0, tempHtmlElement.width, tempHtmlElement.height);
+        const { imageData } = this.sobelService.applySobel(
+          grayscaled?.data,
+          grayscaled?.width ?? 0,
+          grayscaled?.height ?? 0,
+          4
+        );
+        this.context?.putImageData(
+          new ImageData(imageData, tempHtmlElement?.width ?? 0, tempHtmlElement?.height ?? 0),
+          0,
+          0
+        );
+      };
+      tempHtmlElement.src = encodedImg;
+    }
+  }
 
-> You can use any of the plugins above to generate applications as well.
+  @ViewChild('canvas') private readonly canvas!: ElementRef<HTMLCanvasElement>;
+  private context: CanvasRenderingContext2D | null = this.canvas?.nativeElement?.getContext('2d');
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+  constructor(private readonly elementRef: ElementRef<HTMLDivElement>, private readonly sobelService: SobelService) {}
 
-## Generate a library
+  ngAfterViewInit(): void {
+    this.context = this.canvas.nativeElement.getContext('2d');
+    const containerElement: Element | undefined = _first(this.elementRef.nativeElement.children);
+    this.width.emit(containerElement?.clientWidth);
+    this.height.emit(containerElement?.clientHeight);
+  }
+}
+```
 
-Run `ng g @nrwl/angular:lib my-lib` to generate a library.
+## Contributing
 
-> You can also use any of the plugins above to generate libraries as well.
+1. Select a task from the availible issues.
+2. Clone the git repository and checkout the develop branch if not already on it by default.
+3. Ensure you have `nx` installed globally via your flavor of package manager.
+4. Ensure you have at least `nodejs 16.x` installed.
+5. At a mimimum if you've added code, add tests and run them locally.
+   1. run `nx affected:test` to execute unit tests using [jest](https://jestjs.io)
+   2. run `nx affected:lint` to execute linting affected by the change.
+   3. run `nx affected:build` to execute build affected by the change.
+6. Update Documentation as needed.
+7. Pull Request
+   1. Open a Pull request against the original branch `develop`
+   2. Your pull request will build and additional code quality checks will be made.
+   3. Be open to criticism after all we're human all human... right? 🤖
 
-Libraries are shareable across libraries and applications. They can be imported from `@musical-sniffle/mylib`.
+## Credits
 
-## Development server
+[Benjamin Benson](https://github.com/BensonBen),
+[Rick Astley](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-Run `ng serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+[MIT License](https://opensource.org/licenses/MIT) © [Benjamin Benson](https://github.com/BensonBen)
 
-## Code scaffolding
+```
+MIT License
 
-Run `ng g component my-component --project=my-app` to generate a new component.
+Copyright (c) 2022 Benjamin Benson
 
-## Build
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Run `ng build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-## Running unit tests
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-Run `ng test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
-
-
-
-
-
-
-## ☁ Nx Cloud
-
-### Distributed Computation Caching & Distributed Task Execution
-
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
-
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
-
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
+```
