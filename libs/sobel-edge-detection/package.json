@@ -1,6 +1,23 @@
 {
   "name": "@musical-sniffle/sobel-edge-detection",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.2",
+  "description": "Sobel's Algorithm for use in Angular 13 projects and NodeJS projects.",
+  "homepage": "https://github.com/BensonBen/musical-sniffle",
+  "bugs": {
+    "url": "https://github.com/BensonBen/musical-sniffle/issues",
+    "email": "benbedder@outlook.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BensonBen/musical-sniffle.git"
+  },
+  "main": "./index.ts",
+  "author": "Benjamin Benson benbedder@outlook.com",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.22.11 <17",
+    "npm": ">=6 <=8.5.5"
+  },
   "dependencies": {
     "tslib": "^2.3.0"
   }

@@ -33,7 +33,7 @@ Musical Sniffle is designed to be an open source oriented organization to store 
 1.  Usage with Node JS 16.x and [sharp](https://github.com/lovell/sharp)
 
 ```typescript
-// using this implementation requires the ability to create a 
+// using this implementation requires the ability to create a
 import * as sharp from 'sharp';
 import { SobelService } from '@musical-sniffle/sobel-edge-detection';
 
@@ -80,8 +80,11 @@ import { SobelService } from '@musical-sniffle/sobel-edge-detection';
       .graph-paper {
         z-index: 10;
         background-size: 40px 40px;
-        background-image: linear-gradient(to right, lightgray 1px, transparent 1px),
-          linear-gradient(to bottom, lightgray 1px, transparent 1px);
+        background-image: linear-gradient(
+            to right,
+            lightgray 1px,
+            transparent 1px
+          ), linear-gradient(to bottom, lightgray 1px, transparent 1px);
         width: 100%;
         height: 100%;
       }
@@ -91,22 +94,33 @@ import { SobelService } from '@musical-sniffle/sobel-edge-detection';
   providers: [SobelService],
 })
 export class GraphPaperComponent implements AfterViewInit {
-   /**
-    * The encoded image here is in base64 and is not currently grayscaled.
-    * 
-    * You can forego a lot of code here by simply grayscaling the image on the backend before applying sobel.
-    */
+  /**
+   * The encoded image here is in base64 and is not currently grayscaled.
+   *
+   * You can forego a lot of code here by simply grayscaling the image on the backend before applying sobel.
+   */
   @Input() set img(encodedImg: string) {
     if (!(encodedImg == null)) {
       const tempHtmlElement = new Image();
-      tempHtmlElement.onload = event$ => {
+      tempHtmlElement.onload = (event$) => {
         this.canvas.nativeElement.width = tempHtmlElement.width;
         this.canvas.nativeElement.height = tempHtmlElement.height;
         // start: remove if image already grayscaled.
         (this.context as CanvasRenderingContext2D).filter = 'grayscale(1)';
-        this.context?.drawImage(tempHtmlElement, 0, 0, tempHtmlElement.width, tempHtmlElement.height);
+        this.context?.drawImage(
+          tempHtmlElement,
+          0,
+          0,
+          tempHtmlElement.width,
+          tempHtmlElement.height
+        );
         // end: remove if image already grayscaled.
-        const grayscaled = this.context?.getImageData(0, 0, tempHtmlElement.width, tempHtmlElement.height);
+        const grayscaled = this.context?.getImageData(
+          0,
+          0,
+          tempHtmlElement.width,
+          tempHtmlElement.height
+        );
         const { imageData } = this.sobelService.applySobel(
           grayscaled?.data,
           grayscaled?.width ?? 0,
@@ -114,7 +128,11 @@ export class GraphPaperComponent implements AfterViewInit {
           4
         );
         this.context?.putImageData(
-          new ImageData(imageData, tempHtmlElement?.width ?? 0, tempHtmlElement?.height ?? 0),
+          new ImageData(
+            imageData,
+            tempHtmlElement?.width ?? 0,
+            tempHtmlElement?.height ?? 0
+          ),
           0,
           0
         );
@@ -124,13 +142,19 @@ export class GraphPaperComponent implements AfterViewInit {
   }
 
   @ViewChild('canvas') private readonly canvas!: ElementRef<HTMLCanvasElement>;
-  private context: CanvasRenderingContext2D | null = this.canvas?.nativeElement?.getContext('2d');
+  private context: CanvasRenderingContext2D | null =
+    this.canvas?.nativeElement?.getContext('2d');
 
-  constructor(private readonly elementRef: ElementRef<HTMLDivElement>, private readonly sobelService: SobelService) {}
+  constructor(
+    private readonly elementRef: ElementRef<HTMLDivElement>,
+    private readonly sobelService: SobelService
+  ) {}
 
   ngAfterViewInit(): void {
     this.context = this.canvas.nativeElement.getContext('2d');
-    const containerElement: Element | undefined = _first(this.elementRef.nativeElement.children);
+    const containerElement: Element | undefined = _first(
+      this.elementRef.nativeElement.children
+    );
   }
 }
 ```

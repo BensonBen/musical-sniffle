@@ -8,9 +8,9 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-		"affected:build": "nx affected:build",
-		"affected:test": "nx affected:test",
-		"affected:lint": "nx affected:lint"
+    "affected:build": "nx affected:build",
+    "affected:test": "nx affected:test",
+    "affected:lint": "nx affected:lint"
   },
   "private": true,
   "dependencies": {
